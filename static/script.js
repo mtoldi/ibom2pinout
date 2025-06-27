@@ -99,8 +99,8 @@ function renderSvgWithFootprints(fabrication, silkscreen, footprints, edges) {
   const shiftY = (viewMinY + viewHeight / 2) - (minY + maxY) / 2;
   group.setAttribute('transform', `translate(${shiftX}, ${shiftY})`);
 
-  drawPaths(group, fabrication, svgNS, 'purple');
-  drawPaths(group, silkscreen, svgNS, 'black');
+  //drawPaths(group, fabrication, svgNS, 'purple');
+  drawPaths(group, silkscreen, svgNS, 'orange');
   drawFootprints(group, footprints, svgNS, 'green');
   drawEdges(group, edges, svgNS, 'purple');
 
@@ -159,15 +159,17 @@ function drawFootprints(svg, fps, svgNS) {
 
     if (Array.isArray(fp.pads)) {
       fp.pads.forEach(pad => {
+        if (pad.type !== 'th') return; // samo kroz-rupe
+
         if (!Array.isArray(pad.pos) || !Array.isArray(pad.size)) return;
         const r = Math.max(pad.size[0], pad.size[1]) / 2;
 
-        // Crtaj krug za pad
         const c = document.createElementNS(svgNS, 'circle');
         c.setAttribute('cx', pad.pos[0]);
         c.setAttribute('cy', pad.pos[1]);
         c.setAttribute('r', r);
         c.setAttribute('stroke', 'purple');
+        c.setAttribute('stroke-width', 0.1);
         c.setAttribute('fill', 'none');
         svg.appendChild(c);
       });
@@ -211,7 +213,8 @@ function createCircle(svg, center, radius=0.5, color, width=0.15) {
 function drawEdges(svg, edges, svgNS) {
   edges.forEach(edge => {
     if (edge.type === 'segment' && edge.start && edge.end) {
-      createLine(svg, edge.start, edge.end, '#00a', edge.width || 0.15);
+      createLine(svg, edge.start, edge.end, '#800080', edge.width || 0.15); // ljubičasta
+
     } else if (edge.type === 'arc' && edge.start && typeof edge.radius === 'number') {
       const path = document.createElementNS(svgNS, 'path');
 
@@ -229,7 +232,7 @@ function drawEdges(svg, edges, svgNS) {
 
       const d = `M ${sx} ${sy} A ${edge.radius} ${edge.radius} 0 ${largeArc} ${sweep} ${ex} ${ey}`;
       path.setAttribute('d', d);
-      path.setAttribute('stroke', '#00a');
+      path.setAttribute('stroke', '#800080'); // ljubičasta
       path.setAttribute('stroke-width', edge.width || 0.15);
       path.setAttribute('fill', 'none');
       svg.appendChild(path);
