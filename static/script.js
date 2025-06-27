@@ -102,7 +102,7 @@ function renderSvgWithFootprints(fabrication, silkscreen, footprints, edges) {
   drawPaths(group, fabrication, svgNS, 'purple');
   drawPaths(group, silkscreen, svgNS, 'black');
   drawFootprints(group, footprints, svgNS, 'green');
-  drawEdges(group, edges, svgNS);
+  drawEdges(group, edges, svgNS, 'purple');
 
   svg.appendChild(group);
   document.body.appendChild(svg);
@@ -156,30 +156,25 @@ function drawFootprints(svg, fps, svgNS) {
     const pos = Array.isArray(fp.bbox?.pos) ? fp.bbox.pos : null;
     if (!pos) return;
     const [x, y] = pos;
-    if (fp.ref) {
-      const t = document.createElementNS(svgNS,'text');
-      t.setAttribute('x', x);
-      t.setAttribute('y', y);
-      t.setAttribute('font-size', 2.5);
-      t.setAttribute('fill', 'blue');
-      t.textContent = fp.ref;
-      svg.appendChild(t);
-    }
+
     if (Array.isArray(fp.pads)) {
       fp.pads.forEach(pad => {
         if (!Array.isArray(pad.pos) || !Array.isArray(pad.size)) return;
         const r = Math.max(pad.size[0], pad.size[1]) / 2;
-        const c = document.createElementNS(svgNS,'circle');
+
+        // Crtaj krug za pad
+        const c = document.createElementNS(svgNS, 'circle');
         c.setAttribute('cx', pad.pos[0]);
         c.setAttribute('cy', pad.pos[1]);
         c.setAttribute('r', r);
-        c.setAttribute('stroke', 'red');
+        c.setAttribute('stroke', 'purple');
         c.setAttribute('fill', 'none');
         svg.appendChild(c);
       });
     }
   });
 }
+
 
 function createLine(svg, s, e, color, width = 0.15) {
   const l = document.createElementNS("http://www.w3.org/2000/svg",'line');

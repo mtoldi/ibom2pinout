@@ -28,10 +28,13 @@ def upload_file():
     try:
         json_data = lz.decompressFromBase64(compressed_data)
         pcbdata = json.loads(json_data)
+        print("PCB Keys:", pcbdata.keys())
+        print("Footprints sample:", pcbdata.get("footprints", [])[:3])
+
         return jsonify({
             'status': 'ok',
             'drawings': pcbdata.get("drawings", {}),
-            'footprints': pcbdata.get("modules", []),
+            'footprints': pcbdata.get("footprints", []),  # <-- ispravljeno ovdje
             'edges': pcbdata.get("edges", []),
             'metadata': pcbdata.get("metadata", {}),
             'bom': pcbdata.get("bom", {}),
